@@ -25,11 +25,11 @@ RUN echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum -c -
 RUN mkdir -p /usr/src/ruby
 RUN tar -xJf ruby.tar.xz -C /usr/src/ruby --strip-components=1
 RUN rm ruby.tar.xz
-RUN cd /usr/src/ruby
+#RUN cd /usr/src/ruby
 
 	# hack in "ENABLE_PATH_CHECK" disabling to suppress:
 	#   warning: Insecure world writable dir
-RUN { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new
+RUN cd /usr/src/ruby && { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new
 RUN mv file.c.new file.c
 
 RUN autoconf
