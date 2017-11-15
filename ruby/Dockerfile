@@ -1,55 +1,76 @@
+# Copyright (c) 2012-2016 Codenvy, S.A.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+# Contributors:
+# Codenvy, S.A. - initial API and implementation
+
 FROM eclipse/stack-base:ubuntu
+ENV RUBY_MAJOR 2.4
+ENV RUBY_VERSION 2.4.2
+ENV RUBY_DOWNLOAD_SHA256 a330e10d5cb5e53b3a0078326c5731888bb55e32c4abfeb27d9e7f8e5d000250
+ENV RUBYGEMS_VERSION 2.6.2
 
 USER root
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
-		&& { \
-			echo 'install: --no-document'; \
-			echo 'update: --no-document'; \
-		} >> /usr/local/etc/gemrc
-
-ENV RUBY_MAJOR 2.4
-ENV RUBY_VERSION 2.4.2
-ENV RUBY_DOWNLOAD_SHA256 748a8980d30141bd1a4124e11745bb105b436fb1890826e0d2b9ea31af27f735
-ENV RUBYGEMS_VERSION 2.7.2
-ENV BUNDLER_VERSION 1.16.0
+    && echo 'install: --no-document' >> /usr/local/etc/gemrc \
+    && echo 'update: --no-document' >> /usr/local/etc/gemrc
+USER user
 
 # some of ruby's build scripts are written in ruby
-#   we purge system ruby later to make sure our final image uses what we just built
-RUN set -ex && buildDeps='bison dpkg-dev libgdbm-dev ruby'
-RUN	apt-get update
-RUN apt-get install -y --no-install-recommends $buildDeps autoconf dpkg-dev build-essential zlib1g-dev openssl
-RUN rm -rf /var/lib/apt/lists/*
-RUN wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"
-RUN echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum -c -
-RUN mkdir -p /usr/src/ruby
-RUN tar -xJf ruby.tar.xz -C /usr/src/ruby --strip-components=1
-RUN rm ruby.tar.xz
-#RUN cd /usr/src/ruby
+# we purge this later to make sure our final image uses what we just built
+RUN set -ex \
+    && buildDeps=' \
+	bison \
+	libgdbm-dev \
+	ruby \
+    ' \
+    && sudo apt-get update \
+    && sudo apt-get install -y --no-install-recommends make gcc zlib1g-dev autoconf build-essential libssl-dev libsqlite3-dev $buildDeps \
+    && sudo rm -rf /var/lib/apt/lists/* \
+    && sudo curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
+    && echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.gz" | sha256sum -c - \
+    && sudo mkdir -p /usr/src/ruby \
+    && sudo tar -xzf ruby.tar.gz -C /usr/src/ruby --strip-components=1 \
+    && sudo rm ruby.tar.gz 
 
-	# hack in "ENABLE_PATH_CHECK" disabling to suppress:
-	#   warning: Insecure world writable dir
-RUN cd /usr/src/ruby && { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c
-#RUN mv file.c.new file.c
+USER root
+RUN cd /usr/src/ruby \
+    && { sudo echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c \
+    && autoconf \
+    && ./configure --disable-install-doc 
+USER user
 
-RUN cd /usr/src/ruby && autoconf && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && /usr/src/ruby/configure --build="$gnuArch" --disable-install-doc --enable-shared
-RUN cd /usr/src/ruby && make -j "$(nproc)" && make install
+RUN cd /usr/src/ruby \
+    && sudo make -j"$(nproc)" \
+    && sudo make install \
+    && sudo apt-get purge -y --auto-remove $buildDeps \
+    && sudo gem update --system $RUBYGEMS_VERSION \
+    && sudo rm -r /usr/src/ruby
 
-RUN apt-get purge -y --auto-remove $buildDeps
-RUN cd / && rm -r /usr/src/ruby
-			
-RUN gem update --system "$RUBYGEMS_VERSION"
-RUN gem install bundler --version "$BUNDLER_VERSION" --force
+
+ENV BUNDLER_VERSION 1.11.2
+
+RUN sudo gem install bundler --version "$BUNDLER_VERSION"
 
 # install things globally, for great justice
 # and don't create ".bundle" in all our apps
 ENV GEM_HOME /usr/local/bundle
 ENV BUNDLE_PATH="$GEM_HOME" \
-		BUNDLE_BIN="$GEM_HOME/bin" \
-		BUNDLE_SILENCE_ROOT_WARNING=1 \
-		BUNDLE_APP_CONFIG="$GEM_HOME"
+    BUNDLE_BIN="$GEM_HOME/bin" \
+    BUNDLE_SILENCE_ROOT_WARNING=1 \
+    BUNDLE_APP_CONFIG="$GEM_HOME"
 ENV PATH $BUNDLE_BIN:$PATH
-RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
-			&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
+RUN sudo mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
+    && sudo chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
 
-CMD [ "irb" ]
+RUN sudo apt-get update && sudo apt-get install -y nodejs --no-install-recommends && sudo rm -rf /var/lib/apt/lists/*
+
+# see http://guides.rubyonrails.org/command_line.html#rails-dbconsole
+RUN sudo apt-get update && sudo apt-get install -y mysql-client postgresql-client sqlite3 --no-install-recommends && sudo rm -rf /var/lib/apt/lists/*
+
+#RUN sudo gem install rails --version "$RAILS_VERSION"
+
+EXPOSE 3000
