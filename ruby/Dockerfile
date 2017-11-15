@@ -51,7 +51,7 @@ RUN cd /usr/src/ruby \
     && sudo rm -r /usr/src/ruby
 
 
-ENV BUNDLER_VERSION 1.11.2
+ENV BUNDLER_VERSION 1.16.0
 
 RUN sudo gem install bundler --version "$BUNDLER_VERSION"
 
