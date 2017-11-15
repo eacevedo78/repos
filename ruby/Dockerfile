@@ -18,7 +18,7 @@ ENV BUNDLER_VERSION 1.16.0
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -ex && buildDeps='bison dpkg-dev libgdbm-dev ruby'
 RUN	apt-get update
-RUN apt-get install -y --no-install-recommends $buildDeps autoconf
+RUN apt-get install -y --no-install-recommends $buildDeps autoconf dpkg-dev build-essential zlib1g-dev
 RUN rm -rf /var/lib/apt/lists/*
 RUN wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"
 RUN echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum -c -
@@ -32,10 +32,10 @@ RUN rm ruby.tar.xz
 RUN cd /usr/src/ruby && { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c
 #RUN mv file.c.new file.c
 
-RUN autoconf /usr/src/ruby && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && /usr/src/ruby/configure --build="$gnuArch" --disable-install-doc --enable-shared
+RUN cd /usr/src/ruby && autoconf && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && /usr/src/ruby/configure --build="$gnuArch" --disable-install-doc --enable-shared
 RUN cd /usr/src/ruby && make -j "$(nproc)" && make install
 
-RUN apt-get purge -y --auto-remove $buildDeps \
+RUN apt-get purge -y --auto-remove $buildDeps
 RUN cd / && rm -r /usr/src/ruby
 			
 RUN gem update --system "$RUBYGEMS_VERSION"
