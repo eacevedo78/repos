@@ -29,8 +29,8 @@ RUN rm ruby.tar.xz
 
 	# hack in "ENABLE_PATH_CHECK" disabling to suppress:
 	#   warning: Insecure world writable dir
-RUN cd /usr/src/ruby && { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new
-RUN mv file.c.new file.c
+RUN cd /usr/src/ruby && { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c
+#RUN mv file.c.new file.c
 
 RUN autoconf
 RUN gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"
