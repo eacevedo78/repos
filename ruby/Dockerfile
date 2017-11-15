@@ -18,7 +18,7 @@ ENV BUNDLER_VERSION 1.16.0
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -ex && buildDeps='bison dpkg-dev libgdbm-dev ruby'
 RUN	apt-get update
-RUN apt-get install -y --no-install-recommends $buildDeps autoconf dpkg-dev build-essential zlib1g-dev
+RUN apt-get install -y --no-install-recommends $buildDeps autoconf dpkg-dev build-essential zlib1g-dev openssl
 RUN rm -rf /var/lib/apt/lists/*
 RUN wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"
 RUN echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum -c -
