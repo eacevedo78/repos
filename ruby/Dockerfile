@@ -1,5 +1,6 @@
 FROM eclipse/stack-base:ubuntu
 # skip installing gem documentation
+USER root
 RUN mkdir -p /usr/local/etc	&& echo 'install: --no-document' >> /usr/local/etc/gemrc && echo 'update: --no-document' >> /usr/local/etc/gemrc
 
 ENV RUBY_MAJOR 2.4
