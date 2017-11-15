@@ -32,11 +32,8 @@ RUN rm ruby.tar.xz
 RUN cd /usr/src/ruby && { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c
 #RUN mv file.c.new file.c
 
-RUN autoconf
-RUN gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"
-RUN ./configure --build="$gnuArch" --disable-install-doc --enable-shared
-RUN make -j "$(nproc)"
-RUN make install
+RUN cd /usr/src/ruby && autoconf && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && ./configure --build="$gnuArch" --disable-install-doc --enable-shared
+RUN cd /usr/src/ruby && make -j "$(nproc)" && make install
 
 RUN apt-get purge -y --auto-remove $buildDeps \
 RUN cd / && rm -r /usr/src/ruby
