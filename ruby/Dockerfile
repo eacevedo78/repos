@@ -57,7 +57,8 @@ RUN sudo gem install bundler --version "$BUNDLER_VERSION"
 
 # install things globally, for great justice
 # and don't create ".bundle" in all our apps
-ENV GEM_HOME /usr/local/bundle
+#ENV GEM_HOME /usr/local/bundle
+ENV GEM_HOME /projects/.bundle
 ENV BUNDLE_PATH="$GEM_HOME" \
     BUNDLE_BIN="$GEM_HOME/bin" \
     BUNDLE_SILENCE_ROOT_WARNING=1 \
