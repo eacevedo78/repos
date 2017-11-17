@@ -1,8 +1,8 @@
 FROM simplific/nginx-php
 
-ENV PROCESSMAKER_VERSION 2.5.2.8
+ENV PROCESSMAKER_VERSION 2.5.2
 ADD "processmaker-${PROCESSMAKER_VERSION}.tar.gz" /opt/
-ADD files/01-processmaker.conf /etc/nginx/conf.d/01-processmaker.conf
+ADD 01-processmaker.conf /etc/nginx/conf.d/01-processmaker.conf
 
 RUN 	apk --no-cache --update add php-ctype php-cli php-curl php-soap php-ldap php-dom php-mysql freetds php-mssql \
 	&& chown -R nginx:www-data /opt/processmaker \
