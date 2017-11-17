@@ -5,8 +5,8 @@ ADD "processmaker-${PROCESSMAKER_VERSION}.tar.gz" /opt/
 ADD 01-processmaker.conf /etc/nginx/conf.d/01-processmaker.conf
 
 #RUN 	apk --no-cache --update add php-ctype php-cli php-curl php-soap php-ldap php-dom php-mysql freetds php-mssql \
-RUN	chown -R nginx:www-data /opt/processmaker \
-	&& cd /opt/processmaker/workflow/engine \
+#RUN	chown -R nginx:www-data /opt/processmaker \
+RUN	cd /opt/processmaker/workflow/engine \
 	&& ln -s ../../gulliver/bin/gulliver gulliver \
 	&& echo "*/5 * * * * php -f /opt/processmaker/workflow/engine/bin/cron.php +force" >> /var/spool/cron/crontabs/root
 
