@@ -1,4 +1,4 @@
-FROM wodby/nginx-php-5.3-alpine
+FROM wodby/nginx-php-5.3-alpine:1.7.4
 
 ENV PROCESSMAKER_VERSION 2.5.2
 ADD "processmaker-${PROCESSMAKER_VERSION}.tar.gz" /opt/
