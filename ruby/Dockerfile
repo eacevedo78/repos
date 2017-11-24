@@ -28,7 +28,7 @@ RUN set -ex \
 	ruby \
     ' \
     && sudo apt-get update \
-    && sudo apt-get install -y --no-install-recommends make gcc zlib1g-dev autoconf build-essential libssl-dev libsqlite3-dev $buildDeps \
+    && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends make gcc zlib1g-dev autoconf build-essential libssl-dev libsqlite3-dev libreadline-dev tzdata $buildDeps \
     && sudo rm -rf /var/lib/apt/lists/* \
     && sudo curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
     && echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.gz" | sha256sum -c - \
