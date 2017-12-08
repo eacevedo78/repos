@@ -19,7 +19,7 @@ RUN sudo ln -s /opt/instantclient_12_2/libclntsh.so.12.1 /opt/instantclient_12_2
     sudo add-apt-repository ppa:ondrej/php
 
 RUN sudo apt-get update && \
-    sudo apt-get install -y php7.2 php7.2-cli \
+    sudo apt-get install -y libaio1 php7.2 php7.2-cli \
     apache2 \
     php-mcrypt \
     php7.2-curl \
