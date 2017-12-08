@@ -40,7 +40,7 @@ RUN sudo printf "instantclient,/opt/instantclient_12_2" | sudo pecl install oci8
 
 RUN sudo printf ";configuracion oci8 para php\n;priority=20\nextension=oci8.so" > 20-oci8.ini && \
     sudo mv 20-oci8.ini /etc/php/7.2/mods-available && \
-    sudo ln -s /etc/php/7.2/mods-available/20-oci8.ini /etc/php/7.2/apache2/conf.d/20-oci8.ini
+    sudo ln -s /etc/php/7.2/mods-available/20-oci8.ini /etc/php/7.2/apache2/conf.d/20-oci8.ini && \
     sudo ln -s /etc/php/7.2/mods-available/20-oci8.ini /etc/php/7.2/cli/conf.d/20-oci8.ini
 
 RUN sudo sed -i 's/\/var\/www\/html/\/projects/g'  /etc/apache2/sites-available/000-default.conf && \
