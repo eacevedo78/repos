@@ -7,9 +7,9 @@
 # Codenvy, S.A. - initial API and implementation
 
 FROM eclipse/stack-base:ubuntu
-ENV RUBY_MAJOR 2.4
-ENV RUBY_VERSION 2.4.2
-ENV RUBY_DOWNLOAD_SHA256 93b9e75e00b262bc4def6b26b7ae8717efc252c47154abb7392e54357e6c8c9c
+ENV RUBY_MAJOR 2.5
+ENV RUBY_VERSION 2.5.1
+ENV RUBY_DOWNLOAD_SHA256 dac81822325b79c3ba9532b048c2123357d3310b2b40024202f360251d9829b1
 ENV RUBYGEMS_VERSION 2.6.2
 
 USER root
@@ -47,13 +47,13 @@ RUN cd /usr/src/ruby \
     && sudo make -j"$(nproc)" \
     && sudo make install \
     && sudo apt-get purge -y --auto-remove $buildDeps \
-    && sudo gem update --system $RUBYGEMS_VERSION \
+    && sudo gem update --system \
     && sudo rm -r /usr/src/ruby
 
 
-ENV BUNDLER_VERSION 1.16.0
+#ENV BUNDLER_VERSION 1.16.0
 
-RUN sudo gem install bundler --version "$BUNDLER_VERSION"
+#RUN sudo gem install bundler --version "$BUNDLER_VERSION"
 
 # install things globally, for great justice
 # and don't create ".bundle" in all our apps
