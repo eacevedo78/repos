@@ -2,7 +2,7 @@ FROM maven:3-jdk-8-slim
 
 # skip installing gem documentation
 
-ADD .m2 $HOME
+COPY .m2 $HOME
 RUN cd $HOME && tar xvzf .m2.tar.gz
 RUN cd $HOME .m2.tar.gz
 
