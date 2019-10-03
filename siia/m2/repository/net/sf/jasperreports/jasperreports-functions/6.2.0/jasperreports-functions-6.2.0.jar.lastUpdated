@@ -1,7 +1,0 @@
-#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Wed Oct 02 17:30:18 CDT 2019
-http\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1570055417913
-http\://maven.springframework.org/release/.lastUpdated=1570055414096
-http\://maven.springframework.org/release/.error=
-http\://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases/.lastUpdated=1570055418098
-http\://repository.jboss.org/nexus/content/groups/public-jboss/.error=
