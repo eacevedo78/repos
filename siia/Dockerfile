@@ -2,7 +2,8 @@ FROM maven:3-jdk-8-slim
 
 # skip installing gem documentation
 
-RUN cd $HOME && curl https://alumnouaemex-my.sharepoint.com/:u:/g/personal/eacevedod_uaemex_mx/EcDBaQdj3QVIu8LAPHPMtikBcYaZCTlylC3YK8Vo49JcCQ?e=6HHFax
-RUN CD $HOME && tar zxvf .m2.tar.gz
+RUN echo $HOME
+COPY m2/ $HOME
+RUN cd $HOME && mv m2 .m2
 
 EXPOSE 8080
