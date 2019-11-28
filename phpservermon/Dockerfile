@@ -9,5 +9,4 @@ ADD https://github.com/phpservermon/phpservermon/releases/download/v3.4.5/phpser
 EXPOSE 80
 EXPOSE 443
 
-RUN /etc/init.d/cron start
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+CMD ["/usr/sbin/apache2ctl -D FOREGROUND", "service cron start"]
