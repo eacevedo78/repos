@@ -5,8 +5,9 @@ RUN apt-get update && apt-get -y install php php-mysql libapache2-mod-php cron p
 RUN /usr/sbin/a2enmod mpm_prefork
 
 ADD https://github.com/phpservermon/phpservermon/releases/download/v3.4.5/phpservermon-3.4.5.zip /var/www/html
-
+ADD start.sh /
+RUN chmod +x /start.sh
 EXPOSE 80
 EXPOSE 443
 
-CMD ["/usr/sbin/apache2ctl -D FOREGROUND", "service cron start"]
+CMD ["/start.sh"]
