@@ -1,77 +1,31 @@
-# Copyright (c) 2012-2016 Codenvy, S.A.
-# All rights reserved. This program and the accompanying materials
-# are made available under the terms of the Eclipse Public License v1.0
-# which accompanies this distribution, and is available at
-# http://www.eclipse.org/legal/epl-v10.html
-# Contributors:
-# Codenvy, S.A. - initial API and implementation
+FROM ruby:2.7.1-buster
 
-FROM eclipse/stack-base:ubuntu
-ENV RUBY_MAJOR 2.4
-ENV RUBY_VERSION 2.4.2
-ENV RUBY_DOWNLOAD_SHA256 93b9e75e00b262bc4def6b26b7ae8717efc252c47154abb7392e54357e6c8c9c
-ENV RUBYGEMS_VERSION 2.6.2
+#Instalar jtds para sqlserver
+ADD freetds-1.2.3.tar.gz /opt/
+RUN cd /opt/freetds-1.2.3 && ./configure && make  && make install
+RUN rm -rf /opt/freetds-1.2.3/ && echo 'root:admin123' | chpasswd
 
-USER root
-# skip installing gem documentation
-RUN mkdir -p /usr/local/etc \
-    && echo 'install: --no-document' >> /usr/local/etc/gemrc \
-    && echo 'update: --no-document' >> /usr/local/etc/gemrc
-USER user
+ENV DEBIAN_FRONTEND=noninteractive
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 
-# some of ruby's build scripts are written in ruby
-# we purge this later to make sure our final image uses what we just built
-RUN set -ex \
-    && buildDeps=' \
-	bison \
-	libgdbm-dev \
-	ruby \
-    ' \
-    && sudo apt-get update \
-    && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends make gcc zlib1g-dev autoconf build-essential libssl-dev libsqlite3-dev libreadline-dev tzdata $buildDeps \
-    && sudo rm -rf /var/lib/apt/lists/* \
-    && sudo curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
-    && echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.gz" | sha256sum -c - \
-    && sudo mkdir -p /usr/src/ruby \
-    && sudo tar -xzf ruby.tar.gz -C /usr/src/ruby --strip-components=1 \
-    && sudo rm ruby.tar.gz 
+#Instalar nodejs, yarn y gemas para sqlserver, sqlite3, mysql2 y postgresql
+RUN curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt install -y yarn && \
+    gem install tiny_tds mysql2 sqlite3 pg
 
-USER root
-RUN cd /usr/src/ruby \
-    && { sudo echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c \
-    && autoconf \
-    && ./configure --disable-install-doc 
-USER user
+RUN ls /root
+# Parche tomado de https://github.com/eclipse/che-devfile-registry/blob/master/arbitrary-users-patch/Dockerfile
+# para que funcione con eclipse che worspaces
+USER 0
+# Set permissions on /etc/passwd and /home to allow arbitrary users to write
+COPY --chown=0:0 entrypoint.sh /
+RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && chmod +x /entrypoint.sh
 
-RUN cd /usr/src/ruby \
-    && sudo make -j"$(nproc)" \
-    && sudo make install \
-    && sudo apt-get purge -y --auto-remove $buildDeps \
-    && sudo gem update --system $RUBYGEMS_VERSION \
-    && sudo rm -r /usr/src/ruby
+USER 10001
+ENV HOME=/home/user
+WORKDIR /projects
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD ["tail", "-f", "/dev/null"]
 
-
-ENV BUNDLER_VERSION 1.16.0
-
-RUN sudo gem install bundler --version "$BUNDLER_VERSION"
-
-# install things globally, for great justice
-# and don't create ".bundle" in all our apps
-#ENV GEM_HOME /usr/local/bundle
-ENV GEM_HOME /projects/.bundle
-ENV BUNDLE_PATH="$GEM_HOME" \
-    BUNDLE_BIN="$GEM_HOME/bin" \
-    BUNDLE_SILENCE_ROOT_WARNING=1 \
-    BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $BUNDLE_BIN:$PATH
-RUN sudo mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
-    && sudo chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
-
-RUN sudo apt-get update && sudo apt-get install -y nodejs --no-install-recommends && sudo rm -rf /var/lib/apt/lists/*
-
-# see http://guides.rubyonrails.org/command_line.html#rails-dbconsole
-RUN sudo apt-get update && sudo apt-get install -y libmysqlclient-dev mysql-client postgresql-client libpq-dev sqlite3 --no-install-recommends && sudo rm -rf /var/lib/apt/lists/*
-
-#RUN sudo gem install rails --version "$RAILS_VERSION"
-
-EXPOSE 3000
