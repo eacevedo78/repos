@@ -5,12 +5,14 @@ ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 RUN apt-get update && apt-get -y upgrade && \
     apt-get -y install \
     sudo locales \
-    unzip \
+    unzip openssh-server \
     libsqlite3-dev libmysqlclient-dev libpq-dev \
     ca-certificates \
     curl build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev \
     git libncurses5-dev libffi-dev  \
     bash-completion && \
+    mkdir /var/run/sshd && \
+    sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd && \
     echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     # Adding user to the 'root' is a workaround for https://issues.jboss.org/browse/CDK-305
     useradd -u 1000 -G users,sudo,root -d /home/user --shell /bin/bash -m user && \
@@ -53,14 +55,15 @@ RUN for f in "/home/user" "/etc/passwd" "/etc/group" "/projects"; do\
            sudo chgrp -R 0 ${f} && \
            sudo chmod -R g+rwX ${f}; \
         done && \
-        # Generate passwd.template \
-        cat /etc/passwd | \
-        sed s#user:x.*#user:x:\${USER_ID}:\${GROUP_ID}::\${HOME}:/bin/bash#g \
-        > /home/user/passwd.template && \
-        # Generate group.template \
-        cat /etc/group | \
-        sed s#root:x:0:#root:x:0:0,\${USER_ID}:#g \
-        > /home/user/group.template
+    # Generate passwd.template \
+    cat /etc/passwd | \
+    sed s#user:x.*#user:x:\${USER_ID}:\${GROUP_ID}::\${HOME}:/bin/bash#g \
+    > /home/user/passwd.template && \
+    # Generate group.template \
+    cat /etc/group | \
+    sed s#root:x:0:#root:x:0:0,\${USER_ID}:#g \
+    > /home/user/group.template && \
+    sudo sed -ri 's/StrictModes yes/StrictModes no/g' /etc/ssh/sshd_config
 
 COPY entrypoint.sh /home/user/entrypoint.sh
 #Instalar rbenv
