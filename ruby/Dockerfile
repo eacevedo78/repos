@@ -54,15 +54,15 @@ RUN for f in "/home/user" "/etc/passwd" "/etc/group" "/projects"; do\
         done && \
     # Generate passwd.template \
     cat /etc/passwd | \
-    sed s#user:x.*#user:x:\${USER_ID}:\${GROUP_ID}::\${HOME}:/bin/bash#g \
-    > /home/user/passwd.template && \
+    #sed s#user:x.*#user:x:\${USER_ID}:\${GROUP_ID}::\${HOME}:/bin/bash#g \
+    #> /home/user/passwd.template && \
     # Generate group.template \
-    cat /etc/group | \
-    sed s#root:x:0:#root:x:0:0,\${USER_ID}:#g \
-    > /home/user/group.template && \
-    sed -ri 's/StrictModes yes/StrictModes no/g' /etc/ssh/sshd_config
+    #cat /etc/group | \
+    #sed s#root:x:0:#root:x:0:0,\${USER_ID}:#g \
+    #> /home/user/group.template && \
+    #sed -ri 's/StrictModes yes/StrictModes no/g' /etc/ssh/sshd_config
 
-COPY entrypoint.sh /home/user/entrypoint.sh
+COPY entrypoint.sh /
 #Instalar rbenv
 #Descargar rbenv de github
 #SHELL ["/bin/bash", "-c"]
@@ -71,11 +71,11 @@ RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-ins
     echo 'eval "$(rbenv init -)"' >> ~/.bashrc && \
     #source ~/.bashrc
     rbenv install 2.7.1 && \
-    rbenv global 2.7.1 &&  chmod +x /home/user/entrypoint.sh
+    rbenv global 2.7.1
 
 #USER user
 #EXPOSE 22 4403
 WORKDIR /projects
 
-ENTRYPOINT ["/home/user/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD tail -f /dev/null
