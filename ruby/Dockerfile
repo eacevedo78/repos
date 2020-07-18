@@ -40,7 +40,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
 
 ENV LANG en_US.UTF-8
 
-RUN sudo locale-gen en_US.UTF-8 && \
+RUN locale-gen en_US.UTF-8 && \
     cd /home/user && ls -la
 
 
@@ -51,8 +51,8 @@ RUN sudo locale-gen en_US.UTF-8 && \
 ENV HOME /home/user
 ENV PATH $PATH:/$HOME/.rbenv/bin:$HOME/.rbenv/shims
 RUN for f in "/home/user" "/etc/passwd" "/etc/group" "/projects"; do\
-           sudo chgrp -R 0 ${f} && \
-           sudo chmod -R g+rwX ${f}; \
+           chgrp -R 0 ${f} && \
+           chmod -R g+rwX ${f}; \
         done && \
     # Generate passwd.template \
     cat /etc/passwd | \
@@ -62,18 +62,18 @@ RUN for f in "/home/user" "/etc/passwd" "/etc/group" "/projects"; do\
     cat /etc/group | \
     sed s#root:x:0:#root:x:0:0,\${USER_ID}:#g \
     > /home/user/group.template && \
-    sudo sed -ri 's/StrictModes yes/StrictModes no/g' /etc/ssh/sshd_config
+    sed -ri 's/StrictModes yes/StrictModes no/g' /etc/ssh/sshd_config
 
 COPY entrypoint.sh /home/user/entrypoint.sh
 #Instalar rbenv
 #Descargar rbenv de github
 #SHELL ["/bin/bash", "-c"]
-RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | sudo bash && \
+RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash && \
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc && \
     echo 'eval "$(rbenv init -)"' >> ~/.bashrc && \
     #source ~/.bashrc
-    sudo rbenv install 2.7.1 && \
-    sudo rbenv global 2.7.1 && sudo chmod +x /home/user/entrypoint.sh
+    rbenv install 2.7.1 && \
+    rbenv global 2.7.1 &&  chmod +x /home/user/entrypoint.sh
 
 USER user
 EXPOSE 22 4403
