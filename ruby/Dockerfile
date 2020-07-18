@@ -37,8 +37,8 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
 
 ENV LANG en_US.UTF-8
 
-RUN locale-gen en_US.UTF-8 && \
-    cd /home/user && ls -la
+RUN locale-gen en_US.UTF-8
+#    cd /home/user && ls -la
 
 
 # The following instructions set the right
@@ -51,9 +51,9 @@ RUN mkdir /projects
 RUN for f in "/home/user" "/etc/passwd" "/etc/group" "/projects"; do\
            chgrp -R 0 ${f} && \
            chmod -R g+rwX ${f}; \
-        done && \
+        done
     # Generate passwd.template \
-    cat /etc/passwd | \
+    #cat /etc/passwd | \
     #sed s#user:x.*#user:x:\${USER_ID}:\${GROUP_ID}::\${HOME}:/bin/bash#g \
     #> /home/user/passwd.template && \
     # Generate group.template \
