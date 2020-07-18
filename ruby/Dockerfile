@@ -50,6 +50,7 @@ RUN locale-gen en_US.UTF-8 && \
 # that doesn't already exist in /etc/passwd)
 ENV HOME /home/user
 ENV PATH $PATH:/$HOME/.rbenv/bin:$HOME/.rbenv/shims
+RUN mkdir /projects
 RUN for f in "/home/user" "/etc/passwd" "/etc/group" "/projects"; do\
            chgrp -R 0 ${f} && \
            chmod -R g+rwX ${f}; \
