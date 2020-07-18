@@ -45,7 +45,7 @@ RUN locale-gen en_US.UTF-8
 # permissions and scripts to allow the container
 # to be run by an arbitrary user (i.e. a user
 # that doesn't already exist in /etc/passwd)
-ENV HOME /home/user
+ENV HOME /root
 ENV PATH $PATH:/$HOME/.rbenv/bin:$HOME/.rbenv/shims
 RUN mkdir /projects
 RUN for f in "/etc/passwd" "/etc/group" "/projects"; do\
