@@ -12,11 +12,11 @@ RUN apt-get update && apt-get -y upgrade && \
     git libncurses5-dev libffi-dev  \
     bash-completion && \
     mkdir /var/run/sshd && \
-    sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd && \
-    echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    #sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd && \
+    #echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     # Adding user to the 'root' is a workaround for https://issues.jboss.org/browse/CDK-305
-    useradd -u 1000 -G users,sudo,root -d /home/user --shell /bin/bash -m user && \
-    usermod -p "*" user && \
+    #useradd -u 1000 -G users,sudo,root -d /home/user --shell /bin/bash -m user && \
+    #usermod -p "*" user && \
     apt-get clean && \
     apt-get -y autoremove && \
     apt-get -y clean && \
@@ -27,9 +27,6 @@ RUN apt-get update && apt-get -y upgrade && \
 ADD freetds-1.2.3.tar.gz /opt/
 RUN cd /opt/freetds-1.2.3 && ./configure && make  && make install
 RUN rm -rf /opt/freetds-1.2.3/ #&& echo 'root:admin123' | chpasswd
-
-#ENV DEBIAN_FRONTEND=noninteractive
-#ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 
 #Instalar nodejs, yarn
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
@@ -76,8 +73,8 @@ RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-ins
     rbenv install 2.7.1 && \
     rbenv global 2.7.1 &&  chmod +x /home/user/entrypoint.sh
 
-USER user
-EXPOSE 22 4403
+#USER user
+#EXPOSE 22 4403
 WORKDIR /projects
 
 ENTRYPOINT ["/home/user/entrypoint.sh"]
