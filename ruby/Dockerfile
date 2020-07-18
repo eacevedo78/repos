@@ -39,11 +39,10 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt -y autoremove && apt -y clean
 
 ENV LANG en_US.UTF-8
-USER user
+
 RUN sudo locale-gen en_US.UTF-8 && \
     cd /home/user && ls -la
-EXPOSE 22 4403
-WORKDIR /projects
+
 
 # The following instructions set the right
 # permissions and scripts to allow the container
@@ -69,12 +68,16 @@ COPY entrypoint.sh /home/user/entrypoint.sh
 #Instalar rbenv
 #Descargar rbenv de github
 #SHELL ["/bin/bash", "-c"]
-RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash && \
+RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | sudo bash && \
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc && \
     echo 'eval "$(rbenv init -)"' >> ~/.bashrc && \
     #source ~/.bashrc
-    rbenv install 2.7.1 && \
-    rbenv global 2.7.1 && sudo chmod +x /home/user/entrypoint.sh
+    sudo rbenv install 2.7.1 && \
+    sudo rbenv global 2.7.1 && sudo chmod +x /home/user/entrypoint.sh
+
+USER user
+EXPOSE 22 4403
+WORKDIR /projects
 
 ENTRYPOINT ["/home/user/entrypoint.sh"]
 CMD tail -f /dev/null
