@@ -42,7 +42,7 @@ ENV LANG en_US.UTF-8
 USER user
 RUN sudo locale-gen en_US.UTF-8 && \
     cd /home/user && ls -la
-#EXPOSE 22 4403
+EXPOSE 22 4403
 WORKDIR /projects
 
 # The following instructions set the right
