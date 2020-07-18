@@ -48,7 +48,7 @@ RUN locale-gen en_US.UTF-8
 ENV HOME /home/user
 ENV PATH $PATH:/$HOME/.rbenv/bin:$HOME/.rbenv/shims
 RUN mkdir /projects
-RUN for f in "/home/user" "/etc/passwd" "/etc/group" "/projects"; do\
+RUN for f in "/etc/passwd" "/etc/group" "/projects"; do\
            chgrp -R 0 ${f} && \
            chmod -R g+rwX ${f}; \
         done
@@ -76,6 +76,7 @@ RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-ins
 #USER user
 #EXPOSE 22 4403
 WORKDIR /projects
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD tail -f /dev/null
