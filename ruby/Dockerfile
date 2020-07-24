@@ -32,6 +32,6 @@ RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-ins
     rbenv global 2.7.1
 
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+#ENTRYPOINT [ "/entrypoint.sh" ]
 
 CMD tail -f /dev/null
