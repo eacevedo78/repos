@@ -8,19 +8,13 @@ RUN apk add alpine-sdk linux-headers bash nodejs yarn openssl-dev zlib-dev && \
 
 SHELL ["/bin/bash","-c"]
 
-RUN addgroup -S user 
-RUN adduser -u 10001 -G user -h /home/user -S user
+#RUN addgroup -S user 
+#RUN adduser -u 10001 -G user -h /home/user -S user
 
 #Codigo tomado de https://github.com/eclipse/che-devfile-registry/blob/master/arbitrary-users-patch/Dockerfile
 # para que el contenedor trabaje con eclipse che
 
-COPY --chown=0:0 entrypoint.sh /
-RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && chmod +x /entrypoint.sh
-
-#USER 10001
-USER user
 ENV HOME=/home/user
-WORKDIR /projects
 
 #Instalar el rbenv
 ENV PATH=$PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shims
@@ -31,7 +25,15 @@ RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-ins
     rbenv install 2.7.1 && \
     rbenv global 2.7.1
 
+COPY --chown=0:0 entrypoint.sh /
+RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && chmod +x /entrypoint.sh
 
-#ENTRYPOINT [ "/entrypoint.sh" ]
+USER 10001
+#USER user
+ENV HOME=/home/user
+ENV PATH=$PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shims
+WORKDIR /projects
+
+ENTRYPOINT [ "/entrypoint.sh" ]
 
 CMD tail -f /dev/null
