@@ -14,7 +14,7 @@ SHELL ["/bin/bash","-c"]
 COPY --chown=0:0 entrypoint.sh /
 RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && chmod +x /entrypoint.sh
 
-USER 10001
+USER user
 ENV HOME=/home/user
 WORKDIR /projects
 
