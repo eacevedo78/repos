@@ -2,7 +2,7 @@ FROM alpine:3.12.0
 
 ADD freetds-1.2.3.tar.gz /opt/
 
-RUN apk add alpine-sdk linux-headers bash nodejs yarn openssl-dev zlib-dev \
+RUN apk add alpine-sdk linux-headers bash nodejs yarn openssl-dev zlib-dev tzdata \
     mariadb-connector-c-dev sqlite-dev postgresql-dev && \
     cd /opt/freetds-1.2.3 && ./configure && make  && make install && \
     rm -rf /opt/freetds-1.2.3/
