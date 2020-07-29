@@ -35,7 +35,7 @@ USER 10001
 #USER user
 ENV HOME=/home/user
 ENV GEM_HOME=$HOME/.gem
-ENV PATH=$PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shims:$HOME/.gem
+ENV PATH=$PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shims:$HOME/.gem/bin
 WORKDIR /projects
 
 ENTRYPOINT [ "/entrypoint.sh" ]
