@@ -19,7 +19,7 @@ SHELL ["/bin/bash","-c"]
 #Codigo tomado de https://github.com/eclipse/che-devfile-registry/blob/master/arbitrary-users-patch/Dockerfile
 # para que el contenedor trabaje con eclipse che
 
-$ENV HOME=/home/user
+#ENV HOME=/home/user
 
 COPY --chown=0:0 entrypoint.sh /
 RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && chmod +x /entrypoint.sh
