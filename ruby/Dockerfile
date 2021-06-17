@@ -7,14 +7,14 @@ ADD freetds-1.2.21.tar.gz /opt/
 #    cd /opt/freetds-1.2.3 && ./configure && make  && make install && \
 #    rm -rf /opt/freetds-1.2.3/
 
-RUN apk add bash build-base mariadb-connector-c-dev sqlite-dev postgresql-dev nodejs  && \
+RUN apk add bash build-base tzdata mariadb-connector-c-dev sqlite-dev postgresql-dev nodejs yarn && \
     cd /opt/freetds-1.2.21 && ./configure && make  && make install && \
     rm -rf /opt/freetds-1.2.21/
 
 SHELL ["/bin/bash","-c"]
 
-#RUN addgroup -S user 
-#RUN adduser -u 10001 -G user -h /home/user -S user
+RUN addgroup -S user 
+RUN adduser -u 10001 -G user -h /home/user -S user
 
 #Codigo tomado de https://github.com/eclipse/che-devfile-registry/blob/master/arbitrary-users-patch/Dockerfile
 # para que el contenedor trabaje con eclipse che
