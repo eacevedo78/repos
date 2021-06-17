@@ -6,7 +6,7 @@ FROM ruby:3.0.1-alpine3.13
 #    mariadb-connector-c-dev sqlite-dev postgresql-dev && \
 #    cd /opt/freetds-1.2.3 && ./configure && make  && make install && \
 #    rm -rf /opt/freetds-1.2.3/
-
+RUN apk add bash
 SHELL ["/bin/bash","-c"]
 
 #RUN addgroup -S user 
