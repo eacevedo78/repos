@@ -13,8 +13,8 @@ RUN apk add bash build-base tzdata mariadb-connector-c-dev sqlite-dev postgresql
 
 SHELL ["/bin/bash","-c"]
 
-#RUN addgroup -S user 
-#RUN adduser -u 10001 -G user -h /home/user -S user
+RUN addgroup -S user 
+RUN adduser -u 1724 -G user -h /home/user -S user
 
 #Codigo tomado de https://github.com/eclipse/che-devfile-registry/blob/master/arbitrary-users-patch/Dockerfile
 # para que el contenedor trabaje con eclipse che
@@ -24,11 +24,8 @@ SHELL ["/bin/bash","-c"]
 COPY --chown=0:0 entrypoint.sh /
 RUN mkdir -p /home/user && chgrp -R 0 /home && chmod -R g=u /etc/passwd /etc/group /home && chmod +x /entrypoint.sh
 
-RUN addgroup -S user 
-RUN adduser -u 10001 -G user -h /home/user -S user
-
-USER 10001
-#USER user
+#USER 1724
+USER user
 ENV HOME=/home/user
 ENV GEM_HOME=$HOME/.gem
 ENV PATH=$PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shims:$HOME/.gem/bin
