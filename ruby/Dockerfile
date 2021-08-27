@@ -1,6 +1,6 @@
-FROM ruby:3.0.1-alpine3.13
+FROM ruby:3.0.2-alpine3.14
 
-ADD freetds-1.2.21.tar.gz /opt/
+ADD freetds-1.3.2.tar.gz /opt/
 
 #RUN apk add alpine-sdk linux-headers bash nodejs yarn openssl-dev zlib-dev tzdata \
 #    mariadb-connector-c-dev sqlite-dev postgresql-dev && \
@@ -8,8 +8,8 @@ ADD freetds-1.2.21.tar.gz /opt/
 #    rm -rf /opt/freetds-1.2.3/
 
 RUN apk add bash build-base tzdata mariadb-connector-c-dev sqlite-dev postgresql-dev nodejs yarn && \
-    cd /opt/freetds-1.2.21 && ./configure && make  && make install && \
-    rm -rf /opt/freetds-1.2.21/
+    cd /opt/freetds-1.3.2 && ./configure && make  && make install && \
+    rm -rf /opt/freetds-1.3.2/
 
 SHELL ["/bin/bash","-c"]
 
